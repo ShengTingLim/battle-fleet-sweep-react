@@ -53,10 +53,12 @@ export class User {
     }
 
     static isValidUsername(username: string): boolean {
-        if(!Array.from(users.values()).some(user => user.username === username)){
+        if(this.getUserByUsername(username)) {
             return false;
         }
-        return typeof(username) == 'string' && new RegExp('^[a-zA-Z]+$').test(username) && 
-            username.length > 2 && username.length < 17;
+        return typeof(username) == 'string' && 
+                                    /^[a-zA-Z]+$/.test(username) && 
+                                    username.length > 2 && 
+                                    username.length < 17;
     }
 }
