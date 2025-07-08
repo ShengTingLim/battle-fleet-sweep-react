@@ -53,11 +53,10 @@ export class User {
     }
 
     static isValidUsername(username: string): boolean {
-        // Check if the username is already taken or if it meets the criteria
-        return (!Array.from(users.values()).some(user => user.username === username)) || 
-            typeof(username) == 'string' &&              // Ensure input is string type
-            new RegExp('^[a-zA-Z]+$').test(username) &&     // Only letters allowed
-            username.length > 2 &&                          // Minimum 3 characters
-            username.length < 17;
+        if(!Array.from(users.values()).some(user => user.username === username)){
+            return false;
+        }
+        return typeof(username) == 'string' && new RegExp('^[a-zA-Z]+$').test(username) && 
+            username.length > 2 && username.length < 17;
     }
 }
