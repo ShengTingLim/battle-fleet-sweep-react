@@ -1,9 +1,9 @@
 const users = new Map<string, User>();
 
 export class User {
-    socketId: string;
-    username: string | null = null;
-    gameId: string | null = null;
+    private socketId: string;
+    private username: string | null = null;
+    private gameId: string | null = null;
 
     constructor(socketId: string) {
         this.socketId = socketId;
@@ -44,9 +44,9 @@ export class User {
     }
 
     static getIdByUsername(username: string): string | undefined {
-        for (const [id, user] of users.entries()) {
+        for (const [socketId, user] of users.entries()) {
             if (user.username === username) {
-                return id;
+                return socketId;
             }
         }
         return undefined;
