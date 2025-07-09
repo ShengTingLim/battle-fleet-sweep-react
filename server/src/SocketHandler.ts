@@ -8,6 +8,8 @@ export class SocketHandler {
     private io: Server;
     private socket: Socket;
     private user: User;
+    private lobby: LobbyHandler | null = null;
+    private lobbyId: string | null = null;
 
     constructor(io: Server, socket: Socket) {
         this.io = io;
@@ -29,10 +31,10 @@ export class SocketHandler {
                 this.io.to(this.socket.id).emit('error', 'Invalid username. Must be 3-16 letters with no spaces.');
                 return;
             }
-            const lobby = new LobbyHandler(this.user);
-            const lobbyId = lobby.getLobbyId();
-            console.log(`User ${username} created a lobby with ID: ${lobbyId}`);
-            this.socket.join(lobbyId);
+            this.lobby = new LobbyHandler(this.user);
+            this.lobbyId = this.lobby.getLobbyId();
+            console.log(`User ${username} created a lobby with ID: ${this.lobbyId}`);
+            this.socket.join(this.lobbyId);
             this.io.to(this.socket.id).emit('lobbyCreated', this.socket.id);
         })
 
@@ -52,7 +54,7 @@ export class SocketHandler {
                 return;
             }
             this.socket.join(lobbyId);
-            
+            console.log(`User ${username} joined lobby with ID: ${lobbyId}`);
         })
 
         // When user ready ups
@@ -81,11 +83,11 @@ export class SocketHandler {
     }
 
     onTurnBegin() {
-
+        this.socket.emit('turn start');
     }
 
     onWaitBegin() {
-
+        this.socket.emit('wait start');
     }
 
     onStartGame() {
@@ -93,7 +95,7 @@ export class SocketHandler {
     }
 
     onEndGame() {
-
+        
     }
 
     logError() {
