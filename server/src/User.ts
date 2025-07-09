@@ -14,8 +14,24 @@ export class User {
         users.delete(this.socketId);
     }
 
-    setUsername(username: string) {
+    setUsername(username: string): boolean {
+        if (!User.isValidUsername(username)) {
+            return false;
+        }
         this.username = username;
+        return true;
+    }
+
+    getUsername(): string | null {
+        return this.username;
+    }
+
+    getSocketId(): string {
+        return this.socketId;
+    }
+
+    getGameId(): string | null {
+        return this.gameId;
     }
 
     joinGame(gameId: string) {
