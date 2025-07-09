@@ -23,6 +23,16 @@ export class LobbyHandler {
         return this.lobbyId;
     }
 
+    deleteLobby() {
+        if (this.user1) {
+            this.user1.leaveGame();
+        }
+        if (this.user2) {
+            this.user2.leaveGame();
+        }
+        lobbies.delete(this.lobbyId);
+    }
+
     joinLobby(user: User): boolean {
         if (this.user2) {
             return false;
@@ -33,6 +43,9 @@ export class LobbyHandler {
         this.user2 = user;
         user.joinGame(this.lobbyId);
         return true;
+    }
+
+    createGame() {
         
     }
 }
