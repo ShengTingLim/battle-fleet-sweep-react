@@ -16,15 +16,18 @@ export class SocketHandler {
 
         sockets.set(socket.id, this);
 
-        this.socket.on('disconnect', () => {
+        // When user disconnects from server
+        this.socket.on('disconnect', () => { 
             console.log(`Client disconnected: ${this.socket.id}`);
             this.user.deleteUser();
             sockets.delete(this.socket.id);
         });
 
-        this.socket.on('createLobby', (username: string) => {
+        // When user creates a new lobby
+        this.socket.on('create lobby', (username: string) => {
             if(!this.user.setUsername(username)) {
-                
+                this.io.to(this.socket.id).emit('error', 'Invalid username. Must be 3-16 letters with no spaces.');
+                return;
             }
             const lobby = new LobbyHandler(this.user);
             const lobbyId = lobby.getLobbyId();
@@ -33,8 +36,67 @@ export class SocketHandler {
             this.io.to(this.socket.id).emit('lobbyCreated', this.socket.id);
         })
 
-        this.socket.on('joinLobby', (username: string, lobbyId: string) => {
+        // When user joins an existing lobby
+        this.socket.on('join lobby', (username: string, lobbyId: string) => {
+            if(!this.user.setUsername(username)) {
+                this.io.to(this.socket.id).emit('error', 'Invalid username. Must be 3-16 letters with no spaces.');
+                return;
+            }
+            const lobby = LobbyHandler.getLobbyById(lobbyId);
+            if (!lobby) {
+                this.io.to(this.socket.id).emit('error', `That game code was not recognised. Please try again.`);
+                return;
+            }
+            if (!lobby.joinLobby(this.user)) {
+                this.io.to(this.socket.id).emit('error', `That lobby is full or you are already in a game.`);
+                return;
+            }
+            this.socket.join(lobbyId);
+            
+        })
+
+        // When user ready ups
+        this.socket.on('ready', () => {
 
         })
+
+        // When user leaves the game (game finished)
+        this.socket.on('leave game', () => {
+            
+        });
+
+        // When user sets placements
+        this.socket.on('set placements', () => {
+
+        })
+
+        // When user plays a turn
+        this.socket.on('play turn', () => {
+
+        })
+    }
+
+    onJoinedLobby() {
+
+    }
+
+    onTurnBegin() {
+
+    }
+
+    onWaitBegin() {
+
+    }
+
+    onStartGame() {
+
+    }
+
+    onEndGame() {
+
+    }
+
+    logError() {
+
     }
 }
